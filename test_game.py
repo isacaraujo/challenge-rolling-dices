@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 
-from craps.game import CrappingOut, Dice, Game, GameOver
+from game import CrappingOut, Dice, Game, GameOver
 
 
 @pytest.fixture
