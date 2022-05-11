@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 
-from game import CrappingOut, Dice, Game, GameOver
+from game import CrappingOut, Dice, Game, GameEvent, GameOver
 
 
 @pytest.fixture
@@ -15,7 +15,12 @@ def test_shooter_wins_on_opening_roll(dices):
 
     game = Game()
 
+    observer = MagicMock()
+    game.observe(observer)
+
     game.play(shooter, dices)
+
+    observer.assert_called_once_with(GameEvent(11, True))
 
 
 def test_roll_dices_crapping_out(dices):
@@ -24,10 +29,14 @@ def test_roll_dices_crapping_out(dices):
 
     game = Game()
 
+    observer = MagicMock()
+    game.observe(observer)
+
     with pytest.raises(CrappingOut) as exc_info:
         game.play(shooter, dices)
 
     assert exc_info.type is CrappingOut
+    observer.assert_called_once_with(GameEvent(2, False))
 
 
 def test_shooter_wins_after_third_attempt(dices):
@@ -39,7 +48,12 @@ def test_shooter_wins_after_third_attempt(dices):
 
     game = Game()
 
+    observer = MagicMock()
+    game.observe(observer)
+
     game.play(shooter, dices)
+
+    observer.assert_called_once_with(GameEvent(6, True))
 
 
 def test_shooter_loose_after_third_attempt(dices):
@@ -51,7 +65,11 @@ def test_shooter_loose_after_third_attempt(dices):
 
     game = Game()
 
+    observer = MagicMock()
+    game.observe(observer)
+
     with pytest.raises(GameOver) as exc_info:
         game.play(shooter, dices)
 
     assert exc_info.type is GameOver
+    observer.assert_called_once_with(GameEvent(6, False))
